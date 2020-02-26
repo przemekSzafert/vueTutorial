@@ -9,12 +9,14 @@ const createToken = (user, secret, expiresIn) => {
 module.exports = {
   Query: {
     getCurrentUser: async (_, args, { User, currentUser }) => {
-      if(!currentUser){
+      if (!currentUser) {
         return null;
       }
-      const user = await User.findOne({ username: currentUser.username }).populate({
-        path: 'favorites',
-        model: 'Post'
+      const user = await User.findOne({
+        username: currentUser.username
+      }).populate({
+        path: "favorites",
+        model: "Post"
       });
       return user;
     },

@@ -23,26 +23,30 @@ mongoose
   .then(() => console.log("DB connected"))
   .catch(err => console.error(err));
 
-// Verify JWT token passed from client
-
+// Verify JWT Token passed from client
 const getUser = async token => {
-  if(token) {
-    try { 
+  if (token) {
+    try {
       return await jwt.verify(token, process.env.SECRET);
-      console.log(user);
-    } catch (err){
-      throw new AuthenticationError('Your session han ended. Please sign in again')
+    } catch (err) {
+      throw new AuthenticationError(
+        "Your session has ended. Please sign in again."
+      );
     }
   }
-}
+};
 
 // Create Apollo/GraphQL Server using typeDefs, resolvers, and context object
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  formatError: error => ({
+    name: error.name,
+    message: error.message.replace("Context creation failed:", "")
+  }),
   context: async ({ req }) => {
     const token = req.headers["authorization"];
-    return { User, Post, currentUser: await getUser(token) }; 
+    return { User, Post, currentUser: await getUser(token) };
   }
 });
 
